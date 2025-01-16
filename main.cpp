@@ -17,7 +17,7 @@
 
 using namespace QXlsx;
 
-const QString versionString = "v1.0.0";
+const QString versionString = "v1.0.1";
 
 struct Reservation
 {
@@ -246,7 +246,7 @@ int main(int argc, char* argv[])
 
     // set header and footer
     outputDoc.currentWorksheet()->writeHeader(
-            QString("&L&10Reservierungen %1").arg(docTitle));
+            QString("&L&\"Arial,Standard\"&10Reservierungen %1").arg(docTitle));
     outputDoc.currentWorksheet()->writeFooter("&C&\"Arial,Standard\"&10&P/&N");
 
     // save file
