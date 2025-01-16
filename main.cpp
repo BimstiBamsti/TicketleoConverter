@@ -17,7 +17,7 @@
 
 using namespace QXlsx;
 
-const QString versionString = "V1.0.0";
+const QString versionString = "v1.0.0";
 
 struct Reservation
 {
@@ -226,16 +226,16 @@ int main(int argc, char* argv[])
     // write summary and version
     outputDoc.setRowHeight(line++, 5); // set space
     outputDoc.write(line, 1,
-                    QString("Buchungen: %1, Reservierte Plätze: %2")
+                    QString("Buchungen: %1, Reservierte Plätze: %2 --- %3")
                             .arg(bookingList.length())
-                            .arg(total),
+                            .arg(total)
+                            .arg(QDateTime::currentDateTime().toString("d.M.yyyy hh:mm")),
                     formatSummary);
 
     outputDoc.write(line, 6, windowTitle, formatAbout);
 
     // set pagemargin and column widths
-    outputDoc.currentWorksheet()->setPageMargin(0.5, 0.5, 0.3, 0.8, 0.2,
-                                                0.15); // inch
+    outputDoc.currentWorksheet()->setPageMargin(0.5, 0.5, 0.3, 0.8, 0.2, 0.15); // inch
 
     outputDoc.setColumnWidth(1, 8);
     outputDoc.setColumnWidth(2, 15);
@@ -255,7 +255,7 @@ int main(int argc, char* argv[])
 #ifdef QT_DEBUG
             QDir::homePath() + "/QtWorkspace/TicketleoConverter/" + QString("%1.xlsx").arg(docTitle),
 #else
-            QDir::homePath() + QString("/%1.xlsx").arg(docTitle);
+            QDir::homePath() + QString("/%1.xlsx").arg(docTitle),
 #endif
             "Excel Dateien (*.xlsx)");
 
