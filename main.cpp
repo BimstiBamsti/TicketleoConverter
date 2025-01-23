@@ -17,8 +17,6 @@
 
 using namespace QXlsx;
 
-const QString versionString = "v1.0.1";
-
 struct Reservation
 {
     int number;
@@ -37,7 +35,7 @@ int main(int argc, char* argv[])
     QCoreApplication::setApplicationName(QString("TicketleoConverter"));
 
     const QString windowTitle = QString("%1 - %2").arg(
-            QCoreApplication::applicationName(), versionString);
+            QCoreApplication::applicationName(), COMMIT_VERSION);
 
     QString translationsPath(
             QLibraryInfo::location(QLibraryInfo::TranslationsPath));
@@ -73,7 +71,7 @@ int main(int argc, char* argv[])
                     "<li>Erzeugte Datei öffnen</li>"
                     "<li>Druckränder kontrollieren/anpassen</li>"
                     "<li>Arbeitsblatt ausdrucken</li></ul></p>")
-                    .arg(QApplication::applicationName(), versionString));
+                    .arg(QApplication::applicationName(), COMMIT_VERSION));
 
     msgBox.setIconPixmap(QPixmap(":/icons/ticketleo"));
     msgBox.addButton("Datei laden...", QMessageBox::ApplyRole);
@@ -216,7 +214,7 @@ int main(int argc, char* argv[])
         outputDoc.write(line, 5, res.seats, formatSeats);
         outputDoc.write(line, 6, res.preis, formatNr);
 
-        double h = (res.count * (formatLeftTop.fontSize() + 1.8)) + 1;
+        double h = (res.count * (formatLeftTop.fontSize() * 1.13)) + 2.0;
         outputDoc.setRowHeight(line, h);
 
         total += res.count;

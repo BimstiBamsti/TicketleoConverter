@@ -15,6 +15,12 @@ HEADERS +=
 
 FORMS +=
 
+RESOURCES += \
+    resources.qrc
+
+COMMIT = '\\"$$system(git describe --tags)\\"'
+DEFINES += COMMIT_VERSION=\"$${COMMIT}\"
+
 # QXlsx code for Application Qt project
 QXLSX_PARENTPATH=./QXlsx         # current QXlsx path is . (. means curret directory)
 QXLSX_HEADERPATH=./QXlsx/header/  # current QXlsx header path is ./header/
@@ -25,6 +31,3 @@ include(./QXlsx/QXlsx.pri)
 qnx: target.path = /tmp/$${TARGET}/bin
 else: unix:!android: target.path = /opt/$${TARGET}/bin
 !isEmpty(target.path): INSTALLS += target
-
-RESOURCES += \
-    resources.qrc
