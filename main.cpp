@@ -37,12 +37,12 @@ int main(int argc, char* argv[])
     const QString windowTitle = QString("%1 - %2").arg(
             QCoreApplication::applicationName(), COMMIT_VERSION);
 
-    QString translationsPath(
-            QLibraryInfo::location(QLibraryInfo::TranslationsPath));
+    QString translationsPath(QLibraryInfo::path(QLibraryInfo::TranslationsPath));
     QLocale locale(QLocale::German, QLocale::Austria);
 
     QTranslator qtBaseTranslator;
-    qtBaseTranslator.load(locale, "qtbase", "_", translationsPath);
+    if (!qtBaseTranslator.load(locale, "qtbase", "_", translationsPath))
+        qWarning("Basis-Sprachpaket konnte nicht geladen werden - Systemfehler!");
     a.installTranslator(&qtBaseTranslator);
 
     QMessageBox msgBox;
@@ -80,18 +80,18 @@ int main(int argc, char* argv[])
     if (msgBox.exec() != 0)
         return 0;
 
-    QStringList dlPaths =
-            QStandardPaths::standardLocations(QStandardPaths::DownloadLocation);
-
+#ifndef QT_DEBUG
+    QStringList dlPaths = QStandardPaths::standardLocations(QStandardPaths::DownloadLocation);
+#endif
     // get input file
     QString fileName = QFileDialog::getOpenFileName(
             nullptr, "Datei öffnen",
 #ifdef QT_DEBUG
-            QDir::homePath() + "/QtWorkspace/TicketleoConverter/",
+            QDir::homePath() + "/workspace/TicketleoConverter/",
 #else
             dlPaths.isEmpty() ? QDir::homePath() : dlPaths.constFirst(),
 #endif
-            "Excel Dateien (*.xlsx)");
+                                                    "Excel Dateien (*.xlsx)");
 
     if (fileName.isEmpty())
         return 0;
@@ -206,7 +206,7 @@ int main(int argc, char* argv[])
     // write data and set row hight
     int total = 0;
     int line = 2;
-    for (auto& res : qAsConst(bookingList)) {
+    for (const auto &res : std::as_const(bookingList)) {
         outputDoc.write(line, 1, res.number, formatLeftTop);
         outputDoc.write(line, 2, res.firstName, formatLeftTop);
         outputDoc.write(line, 3, res.lastName, formatLeftTop);
