@@ -1,8 +1,9 @@
 # TicketleoConverter
+This allows you to import guest lists downloaded from the
+popular reservation platform and convert them into a usable
+and printable spreadsheet document.
 
-A tool to convert downloaded reservation list from "Ticketleo" in a printable and useable format.
-This is only supporting .xlsx format, wich is the output format.
+[Ticketleo - Event Ticketing mit Platzreservierung](https://www.ticketleo.com)
 
-## Used library
-
+## Forked library
 [QXlsx](https://github.com/QtExcel/QXlsx)

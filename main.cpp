@@ -1,15 +1,39 @@
+// License information
+/*
+TicketleoConverter can import guest lists downloaded from the
+popular reservation platform and convert them into a usable
+and printable spreadsheet document
+
+    Copyright (c) 2025 BimstiBamsti
+
+This program is free software: you can redistribute it and/or modify
+it under the terms of the GNU General Public License as published by
+the Free Software Foundation, either version 3 of the License, or
+(at your option) any later version.
+
+This program is distributed in the hope that it will be useful,
+but WITHOUT ANY WARRANTY; without even the implied warranty of
+MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
+GNU General Public License for more details.
+
+You should have received a copy of the GNU General Public License
+along with this program.  If not, see <https://www.gnu.org/licenses/>.
+*/
+
 /**************************************
  * TicketleoConverter, main.cpp
  *
  * by BimstiBamsti - 2025
  **************************************/
 
+#include <QAbstractButton>
 #include <QApplication>
+#include <QMessageBox>
 #include <QFileDialog>
 #include <QIcon>
-#include <QLibraryInfo>
-#include <QMessageBox>
+#include <QPushButton>
 #include <QStandardPaths>
+#include <QLibraryInfo>
 #include <QTranslator>
 
 #include "xlsxdocument.h"
@@ -45,7 +69,7 @@ int main(int argc, char* argv[])
     QMessageBox msgBox;
     msgBox.setWindowTitle(windowTitle);
     msgBox.setText(
-            QString("<p><center><b>%1 - %2</b><br>"
+            QString("<p><center><u><b style='font-size: large;'>%1 - %2</b></u><br>"
                     "<i style='font-size: small;'>Konvertiert eine "
                     "Ticketleo-Exportdatei in "
                     " ein verwendbares Format</i></center></p>"
@@ -71,11 +95,26 @@ int main(int argc, char* argv[])
                     .arg(QApplication::applicationName(), COMMIT_VERSION));
 
     msgBox.setIconPixmap(QPixmap(":/icons/AppIcon"));
-    msgBox.addButton(QMessageBox::Open);
     msgBox.addButton(QMessageBox::Close);
-    msgBox.button(QMessageBox::Open)->setText("Datei laden...");
+    QPushButton* openButton = msgBox.addButton(QMessageBox::Open);
+    openButton->setText("Datei laden...");
 
-    if (msgBox.exec() != 0)
+    QPushButton* helpButton = msgBox.addButton(QMessageBox::Help);
+    helpButton->setText("Info");
+    helpButton->disconnect();
+    msgBox.connect(helpButton, &QPushButton::clicked, &msgBox, [&]() {
+        QMessageBox::information(&msgBox, windowTitle,
+                                 "<a href=\"https://github.com/BimstiBamsti/TicketleoConverter\">"
+                                 "TicketleoConverter</a><br><br>"
+                                 "<a href=\"https://github.com/QtExcel/QXlsx\">"
+                                 "QXlsx</a><br><br>"
+                                 "<a href=\"https://www.qt.io\">"
+                                 "Qt</a><br><br>"
+                                 "<a href=\"https://www.ticketleo.com\">"
+                                 "Ticketleo - Event Ticketing mit Platzreservierung</a>");
+    });
+
+    if (msgBox.exec() != QMessageBox::Open)
         return 0;
 
 #ifndef QT_DEBUG
@@ -89,7 +128,7 @@ int main(int argc, char* argv[])
 #else
             dlPaths.isEmpty() ? QDir::homePath() : dlPaths.constFirst(),
 #endif
-                                                    "Excel Dateien (*.xlsx)");
+            "Excel Dateien (*.xlsx)");
 
     if (fileName.isEmpty())
         return 0;
@@ -248,7 +287,7 @@ int main(int argc, char* argv[])
     QString saveFileName = QFileDialog::getSaveFileName(
             nullptr, "Datei speichern",
 #ifdef QT_DEBUG
-            QDir::homePath() + "/QtWorkspace/TicketleoConverter/" + QString("%1.xlsx").arg(docTitle),
+            QDir::homePath() + "/workspace/TicketleoConverter/" + QString("%1.xlsx").arg(docTitle),
 #else
             QDir::homePath() + QString("/%1.xlsx").arg(docTitle),
 #endif
