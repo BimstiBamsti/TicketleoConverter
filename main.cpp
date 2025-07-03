@@ -12,7 +12,6 @@
 #include <QStandardPaths>
 #include <QTranslator>
 
-// https://github.com/QtExcel/QXlsx
 #include "xlsxdocument.h"
 
 using namespace QXlsx;
@@ -30,18 +29,16 @@ struct Reservation
 int main(int argc, char* argv[])
 {
     QApplication a(argc, argv);
-    a.setWindowIcon(QIcon(":/icons/ticketleo"));
+    a.setWindowIcon(QIcon(":/icons/AppIcon"));
 
     QCoreApplication::setApplicationName(QString("TicketleoConverter"));
 
     const QString windowTitle = QString("%1 - %2").arg(
             QCoreApplication::applicationName(), COMMIT_VERSION);
 
-    QString translationsPath(QLibraryInfo::path(QLibraryInfo::TranslationsPath));
-    QLocale locale(QLocale::German, QLocale::Austria);
-
     QTranslator qtBaseTranslator;
-    if (!qtBaseTranslator.load(locale, "qtbase", "_", translationsPath))
+    if (!qtBaseTranslator.load(QLocale::system(), "qtbase", "_",
+                               QLibraryInfo::path(QLibraryInfo::TranslationsPath)))
         qWarning("Basis-Sprachpaket konnte nicht geladen werden - Systemfehler!");
     a.installTranslator(&qtBaseTranslator);
 
@@ -73,9 +70,10 @@ int main(int argc, char* argv[])
                     "<li>Arbeitsblatt ausdrucken</li></ul></p>")
                     .arg(QApplication::applicationName(), COMMIT_VERSION));
 
-    msgBox.setIconPixmap(QPixmap(":/icons/ticketleo"));
-    msgBox.addButton("Datei laden...", QMessageBox::ApplyRole);
-    msgBox.addButton("Beenden", QMessageBox::RejectRole);
+    msgBox.setIconPixmap(QPixmap(":/icons/AppIcon"));
+    msgBox.addButton(QMessageBox::Open);
+    msgBox.addButton(QMessageBox::Close);
+    msgBox.button(QMessageBox::Open)->setText("Datei laden...");
 
     if (msgBox.exec() != 0)
         return 0;
@@ -121,7 +119,6 @@ int main(int argc, char* argv[])
 
     do {
         str = inputDoc.read(index, 1).toString();
-
         if (!str.isEmpty()) {
             Reservation res;
             res.number = str.toInt();

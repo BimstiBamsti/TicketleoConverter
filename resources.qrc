@@ -1,5 +1,5 @@
 <RCC>
     <qresource prefix="/icons">
-        <file alias="ticketleo">images/Ticketleo.png</file>
+        <file alias="AppIcon">images/TicketleoConverterIcon.png</file>
     </qresource>
 </RCC>
