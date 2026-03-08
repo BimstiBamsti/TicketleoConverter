@@ -30,6 +30,7 @@ along with this program.  If not, see <https://www.gnu.org/licenses/>.
 #include <QApplication>
 #include <QMessageBox>
 #include <QFileDialog>
+#include <QRegularExpression>
 #include <QIcon>
 #include <QPushButton>
 #include <QStandardPaths>
@@ -47,6 +48,12 @@ constexpr const char* c_inputPriceHeader = "Preis";
 constexpr const char* c_inputCountHeader = "Anzahl";
 constexpr const char* c_inputSeatsHeader = "Sitzplaetze";
 
+struct Seat
+{
+    int tableNr;
+    int seatNr;
+};
+
 struct Reservation
 {
     int number;
@@ -54,8 +61,122 @@ struct Reservation
     QString lastName;
     int price;
     int count;
-    QString seats;
+    QList<Seat> seatList;
 };
+
+QString wrapAtComma(const QString& input, int maxLen = 9)
+{
+    QString result;
+    int start = 0;
+
+    while (start < input.length()) {
+        if (start + maxLen >= input.length()) {
+            result += QStringView(input).mid(start);
+            break;
+        }
+
+        int commaPos = input.indexOf(',', start + maxLen);
+
+        if (commaPos == -1) {
+            result += QStringView(input).mid(start);
+            break;
+        }
+
+        result += QStringView(input).mid(start, commaPos - start + 1);
+        result += "\n";
+
+        start = commaPos + 1;
+
+        if (start < input.length() && input[start] == ' ')
+            start++;
+    }
+
+    return result;
+}
+
+QString compressNumbers(const QVector<int>& nums)
+{
+    if (nums.isEmpty())
+        return {};
+
+    QStringList result;
+
+    int start = nums[0];
+    int prev = nums[0];
+
+    for (int i = 1; i <= nums.size(); ++i) {
+        if (i < nums.size() && nums[i] == prev + 1) {
+            prev = nums[i];
+            continue;
+        }
+
+        int length = prev - start + 1;
+
+        if (length >= 3) {
+            result << QString("%1-%2").arg(start).arg(prev);
+        } else if (length == 2) {
+            result << QString::number(start);
+            result << QString::number(prev);
+        } else {
+            result << QString::number(start);
+        }
+
+        if (i < nums.size())
+            start = prev = nums[i];
+    }
+
+    return wrapAtComma(result.join(", "));
+}
+
+QList<Seat> parseSeatList(const QVariant& data)
+{
+    const QStringList inputList = data.toString()
+                                          .replace("(Plätze, Sitzplatz),", "")
+                                          .replace("(Plätze, Sitzplatz)", "")
+                                          .split('\n');
+
+    QList<Seat> outList;
+    static QRegularExpression re("Tisch\\s+(\\d+),\\s*Platz\\s+(\\d+)");
+
+    for (const auto& str : inputList) {
+        Seat seat;
+        QRegularExpressionMatch match = re.match(str.trimmed());
+        if (match.hasMatch()) {
+            seat.tableNr = match.captured(1).toInt();
+            seat.seatNr = match.captured(2).toInt();
+        }
+
+        outList.append(seat);
+    }
+
+    return outList;
+}
+
+QString seatsOutputText(const QList<Seat>& seatList)
+{
+    if (seatList.length() == 0)
+        return "invalid data";
+
+    QString outString;
+
+    // group tables
+    QMap<int, QList<int>> tablesMap;
+    for (const auto& seat : seatList)
+        tablesMap[seat.tableNr].append(seat.seatNr);
+
+    // generate output string
+    for (auto i = tablesMap.cbegin(), end = tablesMap.cend(); i != end; ++i) {
+        outString.append(QString("Tisch: %1%2%3: %4\n")
+                                 .arg(i.key())
+                                 .arg(i.value().length() == 1 ? "; " : "\n",
+                                      i.value().length() == 1 ? "Platz" : "Plätze",
+                                      compressNumbers(i.value().toVector())));
+    }
+
+    outString.chop(1);
+
+    return outString;
+}
 
 int main(int argc, char* argv[])
 {
@@ -202,10 +323,8 @@ int main(int argc, char* argv[])
             res.lastName = inputDoc.read(index, lastNameColumn).toString();
             res.price = inputDoc.read(index, priceColumn).toInt();
             res.count = inputDoc.read(index, countColumn).toInt();
-            res.seats = inputDoc.read(index, seatsColumn)
-                                .toString()
-                                .replace("(Plätze, Sitzplatz),", "")
-                                .replace("(Plätze, Sitzplatz)", "");
+            res.seatList = parseSeatList(inputDoc.read(index, seatsColumn));
+
             bookingList.append(res);
         }
         index++;
@@ -219,8 +338,9 @@ int main(int argc, char* argv[])
                           return left.number < right.number;
                       else
                           return left.firstName < right.firstName;
-                  } else
+                  } else {
                       return left.lastName < right.lastName;
+                  }
               });
 
     // create output document and define formats
@@ -284,10 +404,11 @@ int main(int argc, char* argv[])
         outputDoc.write(line, 2, res.firstName, formatLeftTop);
         outputDoc.write(line, 3, res.lastName, formatLeftTop);
         outputDoc.write(line, 4, res.count, formatNr);
-        outputDoc.write(line, 5, res.seats, formatSeats);
+        QString seatsText = seatsOutputText(res.seatList);
+        outputDoc.write(line, 5, seatsText, formatSeats);
         outputDoc.write(line, 6, res.price, formatNr);
 
-        double h = (res.count * (formatLeftTop.fontSize() * 1.13)) + 2.0;
+        double h = ((seatsText.count('\n') + 1) * (formatLeftTop.fontSize() * 1.13)) + 2.0;
         outputDoc.setRowHeight(line, h);
 
         total += res.count;
