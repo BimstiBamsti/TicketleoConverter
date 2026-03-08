@@ -4,7 +4,7 @@ TicketleoConverter can import guest lists downloaded from the
 popular reservation platform and convert them into a usable
 and printable spreadsheet document
 
-    Copyright (c) 2025 BimstiBamsti
+    Copyright (c) 2025-2026 BimstiBamsti
 
 This program is free software: you can redistribute it and/or modify
 it under the terms of the GNU General Public License as published by
@@ -23,7 +23,7 @@ along with this program.  If not, see <https://www.gnu.org/licenses/>.
 /**************************************
  * TicketleoConverter, main.cpp
  *
- * by BimstiBamsti - 2025
+ * by BimstiBamsti - 2025-2026
  **************************************/
 
 #include <QAbstractButton>
@@ -45,7 +45,7 @@ struct Reservation
     int number;
     QString firstName;
     QString lastName;
-    int preis;
+    int price;
     int count;
     QString seats;
 };
@@ -163,7 +163,7 @@ int main(int argc, char* argv[])
             res.number = str.toInt();
             res.firstName = inputDoc.read(index, 3).toString();
             res.lastName = inputDoc.read(index, 4).toString();
-            res.preis = inputDoc.read(index, 7).toInt();
+            res.price = inputDoc.read(index, 7).toInt();
             res.count = inputDoc.read(index, 8).toInt();
             res.seats = inputDoc.read(index, 9)
                                 .toString()
@@ -248,7 +248,7 @@ int main(int argc, char* argv[])
         outputDoc.write(line, 3, res.lastName, formatLeftTop);
         outputDoc.write(line, 4, res.count, formatNr);
         outputDoc.write(line, 5, res.seats, formatSeats);
-        outputDoc.write(line, 6, res.preis, formatNr);
+        outputDoc.write(line, 6, res.price, formatNr);
 
         double h = (res.count * (formatLeftTop.fontSize() * 1.13)) + 2.0;
         outputDoc.setRowHeight(line, h);
