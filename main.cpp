@@ -40,6 +40,13 @@ along with this program.  If not, see <https://www.gnu.org/licenses/>.
 
 using namespace QXlsx;
 
+constexpr const char* c_inputNumberHeader = "Reservierungsnr.";
+constexpr const char* c_inputFirstNameHeader = "Vorname";
+constexpr const char* c_inputLastNameHeader = "Nachname";
+constexpr const char* c_inputPriceHeader = "Preis";
+constexpr const char* c_inputCountHeader = "Anzahl";
+constexpr const char* c_inputSeatsHeader = "Sitzplaetze";
+
 struct Reservation
 {
     int number;
@@ -144,28 +151,58 @@ int main(int argc, char* argv[])
         return -1;
     }
 
-    if (inputDoc.read("A3").toString() != "Reservierungsnr.") {
+    // determine columns
+    int numberColumn = -1;    // 1;
+    int firstNameColumn = -1; // 4;
+    int lastNameColumn = -1;  // 5;
+    int priceColumn = -1;     // 8;
+    int countColumn = -1;     // 9;
+    int seatsColumn = -1;     // 10;
+
+    QString str;
+    int col = 1;
+    do {
+        str = inputDoc.read(3, col).toString();
+        if (!str.isEmpty()) {
+            if (str == c_inputNumberHeader)
+                numberColumn = col;
+            else if (str == c_inputFirstNameHeader)
+                firstNameColumn = col;
+            else if (str == c_inputLastNameHeader)
+                lastNameColumn = col;
+            else if (str == c_inputPriceHeader)
+                priceColumn = col;
+            else if (str == c_inputCountHeader)
+                countColumn = col;
+            else if (str == c_inputSeatsHeader)
+                seatsColumn = col;
+        }
+        col++;
+    } while (!str.isEmpty());
+
+    // check columns
+    if (numberColumn == -1 || firstNameColumn == -1 || lastNameColumn == -1
+        || priceColumn == -1 || countColumn == -1 || seatsColumn == -1) {
         QMessageBox::critical(nullptr, "Fehler!",
-                              "Startmarke nicht gefunden!\n"
+                              "Nötige Spalten konnten nicht gefunden werden!\n"
                               "Dateiformat fehlerhaft.");
         return -2;
     }
 
     // read input data
     QList<Reservation> bookingList;
-    QString str;
+    str = "";
     int index = 4;
-
     do {
-        str = inputDoc.read(index, 1).toString();
+        str = inputDoc.read(index, numberColumn).toString();
         if (!str.isEmpty()) {
             Reservation res;
             res.number = str.toInt();
-            res.firstName = inputDoc.read(index, 3).toString();
-            res.lastName = inputDoc.read(index, 4).toString();
-            res.price = inputDoc.read(index, 7).toInt();
-            res.count = inputDoc.read(index, 8).toInt();
-            res.seats = inputDoc.read(index, 9)
+            res.firstName = inputDoc.read(index, firstNameColumn).toString();
+            res.lastName = inputDoc.read(index, lastNameColumn).toString();
+            res.price = inputDoc.read(index, priceColumn).toInt();
+            res.count = inputDoc.read(index, countColumn).toInt();
+            res.seats = inputDoc.read(index, seatsColumn)
                                 .toString()
                                 .replace("(Plätze, Sitzplatz),", "")
                                 .replace("(Plätze, Sitzplatz)", "");
