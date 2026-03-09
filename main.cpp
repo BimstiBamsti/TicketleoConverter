@@ -273,12 +273,12 @@ int main(int argc, char* argv[])
     }
 
     // determine columns
-    int numberColumn = -1;    // 1;
-    int firstNameColumn = -1; // 4;
-    int lastNameColumn = -1;  // 5;
-    int priceColumn = -1;     // 8;
-    int countColumn = -1;     // 9;
-    int seatsColumn = -1;     // 10;
+    int numberColumn = -1;
+    int firstNameColumn = -1;
+    int lastNameColumn = -1;
+    int priceColumn = -1;
+    int countColumn = -1;
+    int seatsColumn = -1;
 
     QString str;
     int col = 1;
