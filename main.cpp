@@ -441,14 +441,16 @@ int main(int argc, char* argv[])
     outputDoc.currentWorksheet()->writeFooter("&C&\"Arial,Standard\"&10&P/&N");
 
     // save file
-    QString saveFileName = QFileDialog::getSaveFileName(
-            nullptr, "Datei speichern",
+    QString defaultFileName = docTitle;
+    defaultFileName.replace(".", "").replace(" ", "_").replace(":", "").replace(";", "");
 #ifdef QT_DEBUG
-            QDir::homePath() + "/workspace/TicketleoConverter/" + QString("%1.xlsx").arg(docTitle),
+    QString defaultFile = QDir::homePath() + "/workspace/TicketleoConverter/" + QString("%1.xlsx").arg(defaultFileName);
 #else
-            QDir::homePath() + QString("/%1.xlsx").arg(docTitle),
+    QString defaultFile = QDir::homePath() + QString("/%1.xlsx").arg(defaultFileName);
 #endif
-            "Excel Dateien (*.xlsx)");
+
+    QString saveFileName = QFileDialog::getSaveFileName(
+            nullptr, "Datei speichern", defaultFile, "Excel Dateien (*.xlsx)");
 
     if (saveFileName.isEmpty())
         return 0;
