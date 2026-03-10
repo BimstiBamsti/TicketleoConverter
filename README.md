@@ -7,3 +7,14 @@ and printable spreadsheet document.
 
 ## Forked library
 [QXlsx](https://github.com/QtExcel/QXlsx)
+
+## Build
+#### Requirements
+- Qt (including qmake)
+- C++ compiler
+```
+qmake ./TicketleoConverter.pro
+make
+```
+
+ _Tested with Qt 6.10.2_
