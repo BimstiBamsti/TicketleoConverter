@@ -64,7 +64,7 @@ struct Reservation
     QList<Seat> seatList;
 };
 
-QString wrapAtComma(const QString& input, int maxLen = 9)
+QString wrapAtComma(const QString& input, int maxLen = 14)
 {
     QString result;
     int start = 0;
@@ -166,10 +166,9 @@ QString seatsOutputText(const QList<Seat>& seatList)
 
     // generate output string
     for (auto i = tablesMap.cbegin(), end = tablesMap.cend(); i != end; ++i) {
-        outString.append(QString("Tisch: %1%2%3: %4\n")
+        outString.append(QString("Tisch: %1; %2: %3\n")
                                  .arg(i.key())
-                                 .arg(i.value().length() == 1 ? "; " : "\n",
-                                      i.value().length() == 1 ? "Platz" : "Plätze",
+                                 .arg(i.value().length() == 1 ? "Platz" : "Plätze",
                                       compressNumbers(i.value().toVector())));
     }
 
@@ -427,13 +426,13 @@ int main(int argc, char* argv[])
     outputDoc.write(line, 6, windowTitle, formatAbout);
 
     // set pagemargin and column widths
-    outputDoc.currentWorksheet()->setPageMargin(0.5, 0.5, 0.3, 0.8, 0.2, 0.15); // inch
+    outputDoc.currentWorksheet()->setPageMargin(0.5, 0.5, 0.3, 0.7, 0.2, 0.15); // inch
 
     outputDoc.setColumnWidth(1, 8);
     outputDoc.setColumnWidth(2, 15);
     outputDoc.setColumnWidth(3, 20);
     outputDoc.setColumnWidth(4, 6);
-    outputDoc.setColumnWidth(5, 15);
+    outputDoc.setColumnWidth(5, 25);
     outputDoc.setColumnWidth(6, 5);
 
     // set header and footer
