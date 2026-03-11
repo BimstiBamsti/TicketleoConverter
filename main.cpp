@@ -41,12 +41,12 @@ along with this program.  If not, see <https://www.gnu.org/licenses/>.
 
 using namespace QXlsx;
 
-constexpr const char* c_inputNumberHeader = "Reservierungsnr.";
-constexpr const char* c_inputFirstNameHeader = "Vorname";
-constexpr const char* c_inputLastNameHeader = "Nachname";
-constexpr const char* c_inputPriceHeader = "Preis";
-constexpr const char* c_inputCountHeader = "Anzahl";
-constexpr const char* c_inputSeatsHeader = "Sitzplaetze";
+constexpr std::string_view c_inputNumberHeader = "Reservierungsnr.";
+constexpr std::string_view c_inputFirstNameHeader = "Vorname";
+constexpr std::string_view c_inputLastNameHeader = "Nachname";
+constexpr std::string_view c_inputPriceHeader = "Preis";
+constexpr std::string_view c_inputCountHeader = "Anzahl";
+constexpr std::string_view c_inputSeatsHeader = "Sitzplaetze";
 
 struct Seat
 {
