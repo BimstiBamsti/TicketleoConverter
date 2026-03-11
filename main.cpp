@@ -345,43 +345,43 @@ int main(int argc, char* argv[])
     Document outputDoc;
 
     Format formatHeader;
-    formatHeader.setFontName("Arial");
-    formatHeader.setFontSize(10);
+    formatHeader.setFontName("Calibri");
+    formatHeader.setFontSize(11);
     formatHeader.setHorizontalAlignment(Format::AlignHCenter);
     formatHeader.setVerticalAlignment(Format::AlignVCenter);
     formatHeader.setFontBold(true);
     formatHeader.setBorderStyle(Format::BorderThin);
 
     Format formatLeftTop;
-    formatLeftTop.setFontName("Arial");
-    formatLeftTop.setFontSize(10);
+    formatLeftTop.setFontName("Calibri");
+    formatLeftTop.setFontSize(11);
     formatLeftTop.setHorizontalAlignment(Format::AlignLeft);
     formatLeftTop.setVerticalAlignment(Format::AlignTop);
     formatLeftTop.setBorderStyle(Format::BorderHair);
 
     Format formatNr;
-    formatNr.setFontName("Arial");
-    formatNr.setFontSize(10);
+    formatNr.setFontName("Calibri");
+    formatNr.setFontSize(11);
     formatNr.setHorizontalAlignment(Format::AlignHCenter);
     formatNr.setVerticalAlignment(Format::AlignTop);
     formatNr.setBorderStyle(Format::BorderHair);
 
     Format formatSeats;
-    formatSeats.setFontName("Arial");
-    formatSeats.setFontSize(10);
+    formatSeats.setFontName("Calibri");
+    formatSeats.setFontSize(11);
     formatSeats.setVerticalAlignment(Format::AlignTop);
     formatSeats.setTextWrap(true);
     formatSeats.setBorderStyle(Format::BorderHair);
 
     Format formatSummary;
-    formatSummary.setFontName("Arial");
-    formatSummary.setFontSize(10);
+    formatSummary.setFontName("Calibri");
+    formatSummary.setFontSize(11);
     formatSummary.setVerticalAlignment(Format::AlignVCenter);
     formatSummary.setFontItalic(true);
 
     Format formatAbout;
-    formatAbout.setFontName("Arial");
-    formatAbout.setFontSize(8);
+    formatAbout.setFontName("Calibri");
+    formatAbout.setFontSize(9);
     formatAbout.setHorizontalAlignment(Format::AlignRight);
     formatAbout.setVerticalAlignment(Format::AlignVCenter);
     formatAbout.setFontItalic(true);
@@ -406,8 +406,9 @@ int main(int argc, char* argv[])
         outputDoc.write(line, 5, seatsText, formatSeats);
         outputDoc.write(line, 6, res.price, formatNr);
 
-        double h = ((seatsText.count('\n') + 1) * (formatLeftTop.fontSize() * 1.13)) + 2.0;
-        outputDoc.setRowHeight(line, h);
+        int lines = seatsText.count('\n') + 1;
+        double height = ((formatSeats.fontSize() + 1.4) * lines) - lines + 2;
+        outputDoc.setRowHeight(line, height);
 
         total += res.count;
         line++;
