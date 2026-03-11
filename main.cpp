@@ -426,14 +426,14 @@ int main(int argc, char* argv[])
     outputDoc.write(line, 6, windowTitle, formatAbout);
 
     // set pagemargin and column widths
-    outputDoc.currentWorksheet()->setPageMargin(0.5, 0.5, 0.3, 0.7, 0.2, 0.15); // inch
+    outputDoc.currentWorksheet()->setPageMargin(0.7, 0.5, 0.3, 0.7, 0.4, 0.15); // inch
 
-    outputDoc.setColumnWidth(1, 8);
-    outputDoc.setColumnWidth(2, 15);
-    outputDoc.setColumnWidth(3, 20);
-    outputDoc.setColumnWidth(4, 6);
-    outputDoc.setColumnWidth(5, 25);
-    outputDoc.setColumnWidth(6, 5);
+    outputDoc.setColumnWidth(1, 10); // Nummer
+    outputDoc.setColumnWidth(2, 15); // Vorname
+    outputDoc.setColumnWidth(3, 23); // Nachname
+    outputDoc.setColumnWidth(4, 8);  // Anzahl
+    outputDoc.setColumnWidth(5, 27); // Sitzplätze
+    outputDoc.setColumnWidth(6, 7);  // Preis
 
     // set header and footer
     outputDoc.currentWorksheet()->writeHeader(
