@@ -243,17 +243,15 @@ int main(int argc, char* argv[])
     if (msgBox.exec() != QMessageBox::Open)
         return 0;
 
-#ifndef QT_DEBUG
-    QStringList dlPaths = QStandardPaths::standardLocations(QStandardPaths::DownloadLocation);
+#ifdef QT_DEBUG
+    QStringList defaultPaths = { QDir::homePath() + "/workspace/TicketleoConverter" };
+#else
+    QStringList defaultPaths = QStandardPaths::standardLocations(QStandardPaths::DownloadLocation);
 #endif
+
     // get input file
     QString fileName = QFileDialog::getOpenFileName(
-            nullptr, "Datei öffnen",
-#ifdef QT_DEBUG
-            QDir::homePath() + "/workspace/TicketleoConverter/",
-#else
-            dlPaths.isEmpty() ? QDir::homePath() : dlPaths.constFirst(),
-#endif
+            nullptr, "Datei öffnen", defaultPaths.isEmpty() ? QDir::homePath() : defaultPaths.constFirst(),
             "Excel Dateien (*.xlsx)");
 
     if (fileName.isEmpty())
